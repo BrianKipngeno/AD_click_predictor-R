@@ -1,0 +1,353 @@
+---
+title: "AD click predictor"
+author: "Brian"
+date: '2022-03-19'
+output:
+  html_document: default
+---
+
+## Defining the Question
+
+A Kenyan entrepreneur has created an online cryptography course and would want to advertise it on her blog. She currently targets audiences originating from various countries. In the past, she ran ads to advertise a related course on the same blog and collected data in the process. She would now like to employ your services as a Data Science Consultant to help her identify which individuals are most likely to click on her ads. 
+
+### a)Specifying the Question
+
+1. Identify which Individuals are most likely to click on the client's Ads
+
+### b)The metric of Success
+Identify which Individuals are most likely to click on the ads based on the data acquired
+
+### c)The Context
+Online marketing of a Cryptography Class by using Ads
+
+### d)Experimental Design
+1. Loading the Data
+2. Checking the Data
+3. Tidying the Data
+4. Exploratory data analysis
+5, conclussion and recommendation
+
+## Importing library
+```{r }```
+## Reading the Data
+# Load the dataset
+```{r}
+library(data.table)
+adclick <- fread('http://bit.ly/IPAdvertisingData')
+head(adclick)
+```
+## Checking the Data
+```{r }
+# Checking the top 6 records 
+
+head(adclick)
+```
+
+```{r }
+# Checking the bottom 6 records
+
+tail(adclick)
+```
+
+```{r }
+# Checking the total number of records
+
+nrow(adclick)
+```
+
+```{r }
+# Checking the total number of columns
+
+ncol(adclick)
+```
+```{r }
+# Checking all column names
+
+names(adclick)
+```
+
+```{r }
+# Checking the data types of each column
+
+str(adclick)
+```
+
+```{r }
+# Checking the number of unique values in each column
+
+lengths(lapply(adclick, unique))
+```
+
+```{r }
+# Checking the summary of the data
+
+summary(adclick)
+```
+## Data Cleaning
+### Missing Values
+```{r }
+# Checking the existence of missing values
+
+colSums(is.na(adclick))
+```
+There are no missing values in our dataset.
+
+### Duplicate values
+```{r }
+#Duplicated Values 
+advert <- unique(adclick)
+dim(advert)
+```
+There are no duplicated values.
+
+### Outliers
+```{r }
+# creating a variable with only numeric columns
+
+library(tidyverse)
+my_data <- adclick %>% select(1,2,3,4,7,10)
+```
+
+```{r }
+# Previewing outliers for numeric columns using boxplots
+
+boxplot(my_data)
+```
+
+```{r }
+# Boxplot for daily time spent variable
+
+boxplot(adclick$`Daily Time Spent on Site`)
+```
+
+```{r }
+# Boxplot for age variable
+
+boxplot(adclick$Age)
+```
+
+```{r }
+# Boxplot for daily internet usage variable
+
+boxplot(adclick$`Daily Internet Usage`)
+```
+
+```{r }
+# Boxplot for area income variable
+
+boxplot(adclick$`Area Income`)
+```
+ 'area income' is the only variable with outliers
+```{r }
+# Displaying all outliers in the income column
+
+boxplot.stats(adclick$`Area Income`)$out
+```
+
+```{r }
+# Checking the countries associated with outlier incomes
+
+adclick$Country[adclick$`Area Income` %in% c(17709.98, 18819.34, 15598.29, 15879.1, 14548.06, 13996.5, 14775.5, 18368.57)]
+```
+
+#** EXPLORATORY DATA ANALYSIS**
+## Univariate analysis
+```{r }
+## Calculating the mean for all numeric columns
+
+lapply(my_data,FUN=mean)
+```
+```{r }
+## Calculating the median for all numeric columns
+
+lapply(my_data,FUN=median)
+```
+```{r }
+# Calculating the mode for all numeric columns
+
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+lapply(my_data,FUN=getmode)
+```
+
+```{r }
+# Calculating the minimum value for all numeric columns
+
+lapply(my_data,FUN=min)
+```
+```{r }
+# Calculating the maximum value for all numeric columns
+
+lapply(my_data,FUN=max)
+```
+```{r }
+# Checking the range for all numeric columns
+
+lapply(my_data,FUN=range)
+```
+```{r }
+# Calculating the quantiles for all numeric columns
+
+lapply(my_data,FUN=quantile)
+```
+```{r }
+# Calculating the variance for all numeric columns
+
+lapply(my_data,FUN=var)
+```
+```{r }
+# Calculating the standard deviation for all numeric columns
+
+lapply(my_data,FUN=sd)
+```
+```{r }
+# Plotting a histogram for age variable
+
+hist(adclick$Age)
+```
+```{r }
+# Plotting a histogram for age variable
+
+hist(adclick$Age)
+```
+```{r }
+# Plotting a histogram for age variable
+
+hist(adclick$Age)
+```
+```{r }
+# Plotting a histogram for age variable
+
+hist(adclick$Age)
+```
+```{r }
+# Plotting a histogram for age variable
+
+hist(adclick$Age)
+```
+```{r }
+# Plotting a histogram for age variable
+
+hist(adclick$Age)
+```
+```{r }
+# Plotting a histogram for age variable
+
+hist(adclick$Age)
+```
+The frequency distribution above depicts a relatively normal distribution for the age attribute. Most individuals' age is centered around the mean.
+```{r }
+# Plotting a histogram for area income variable
+
+hist(adclick$`Area Income`)
+```
+Income distribution is skewed to the left
+```{r }
+# Plotting a histogram for daily time variable
+
+hist(adclick$`Daily Time Spent on Site`)
+```
+```{r }
+# Plotting a histogram for daily internet variable
+
+hist(adclick$`Daily Internet Usage`)
+```
+```{r }
+# Plotting a histogram for gender variable
+
+hist(adclick$Male)
+```
+The number of males and females is fairly balanced.
+
+```{r }
+# Bar plot of the age variable
+
+age <- adclick$Age
+age_freq <- table(age)
+barplot(age_freq)
+```
+#### BarPlots
+```{r Barplots, echo=FALSE}
+# How many Males Vs. Females
+male <- table(adclick$Male)
+barplot(male,main = "Male",col = topo.colors(2),ylim = c(0, 800))
+legend("topright",inset = .02, title="Gender",
+       c("Female","Male"), fill=topo.colors(2), cex=0.8)
+```
+
+```{r }
+# the most popular countries
+par(las=2, cex.axis=0.7)
+country <- table(adclick$Country)
+barplot(sort(country[1:40], decreasing = TRUE), main = "Country",col = terrain.colors(20))
+```
+```{r }
+# The most popular Age
+par(las=2)
+age <- table(adclick$Age)
+barplot(sort(age[1:20], decreasing = TRUE), main = "Age",col = terrain.colors(20))
+```
+## Bivariate analysis
+```{r }
+# Scatter plot to compare age vs income
+
+plot(adclick$`Age`, adclick$`Area Income`, xlab="Age", ylab="Income")
+```
+Most high income individuals are between the ages of 30 to 50.
+```{r }
+# Scatter plot to compare income vs Clicked on ad
+
+plot(adclick$`Clicked on Ad`, adclick$`Area Income`, xlab="Clicked on Ad", ylab="Income")
+```
+Most low income individuals clicked on the ad.
+```{r }
+# Scatter plot to compare age vs daily time spent
+
+plot(adclick$Age, adclick$`Daily Time Spent on Site`, xlab="Age", ylab="Time Spent")
+```
+
+```{r }
+# # Covariance
+covariance_matrix = cov(my_data)
+View(round(covariance_matrix,2))
+
+```
+
+```{r }
+# Checking the correlation coefficients for numeric variables
+# plotting libraries
+#library("dplyr")
+#library("ggplot2")
+#install.packages("ggcorrplot")
+#library(ggcorrplot)
+###corr = round(cor(select_if(my_data, is.numeric)), 2)
+##ggcorrplot(corr, hc.order = T, ggtheme = ggplot2::theme_gray,
+   #colors = c("#6D9EC1", "white", "#E46726"), lab = T)
+
+```
+#### Correlation
+```{r correlation}
+# Correlation Matrix
+correlation_matrix = cor(my_data)
+View(round(correlation_matrix,2))
+```
+Clicked on Ad column has strong negative correlation with Daily Time Spent on Internet and Daily Internet Usage
+It has a moderate negative Correlation with Area Income and a Moderate Positive Correlation with Age
+
+Therefore this columns
+1.Daily Time Spent on Internet
+2.Daily Internet Usage
+3.Area Income
+4.Age
+Can be used to determine if a an Ad will be clicked on or not
+
+## Conclussion and recommendations
+From the above analysis, below are some of the conclusions and recommendations that can be provided to the business user based on the data:
+
+There is no need to have a time threshold before one can view the course advertisement on the blog. This is because most users who spent a relatively short time on the blog clicked on a previous similar ad.
+
+Users who are relatively older (above 50) are most likely to click on the ad. The advertisement can therefore target that age group more compared to other age groups.
+
+Low income areas should still be included in the target group of the ad since users in that income bracket are most likely to view the advertisement. Areas that experience low internet usage should also be included in the target audience.
